@@ -4,8 +4,6 @@
 #include "src/pila.h"
 #include "src/constantes.h"
 
-const char OPERADORES_VALIDOS[CANTIDAD_OPERADORES] = { '+', '-', '*', '/' };
-
 double efectuar_operacion_suma(double numero_1, double numero_2)
 {
 	return numero_1 + numero_2;
@@ -33,6 +31,8 @@ bool argumento_representa_operando(char *argumento)
 
 int identificar_indice_operador(char operador)
 {
+	char OPERADORES_VALIDOS[CANTIDAD_OPERADORES] = { '+', '-', '*', '/' };
+
 	int indice_operador = -1;
 
 	int i = 0;
@@ -59,11 +59,11 @@ int parsear_argumentos(int argc, char **argv, bool *argumento_es_operando)
 		if (argumento_representa_operando(argv[i])) {
 			argumento_es_operando[i - 1] = true;
 			cantidad_operandos++;
-		} else if (identificar_indice_operador(argv[i][0]) != -1)
+		} else if (identificar_indice_operador(argv[i][0]) != -1) {
 			cantidad_operadores++;
-		else
+		} else {
 			flag_argumento_invalido = true;
-
+		}
 		i++;
 	}
 	if (cantidad_operandos != cantidad_operadores + 1)
@@ -92,9 +92,9 @@ double calcular_resultado(int argc, char **argv, pila_t *pila,
 			double *numero_1 = pila_desapilar(pila);
 			double *numero_2 = pila_desapilar(pila);
 
-			if (numero_1 == NULL || numero_2 == NULL)
+			if (numero_1 == NULL || numero_2 == NULL) {
 				*flag_error_calculo = true;
-			else {
+			} else {
 				int indice_operador =
 					identificar_indice_operador(argv[i][0]);
 				double *resultado_operacion =

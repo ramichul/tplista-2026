@@ -91,9 +91,9 @@ lista_t *lista_insertar_posicion(lista_t *lista, size_t posicion,
 	nuevo_nodo->contenido = elemento;
 	nuevo_nodo->siguiente_nodo = lista_buscar_nodo(lista, posicion);
 
-	if (posicion == 0)
+	if (posicion == 0) {
 		lista->inicio = nuevo_nodo;
-	else {
+	} else {
 		nodo_t *nodo_anterior = lista_buscar_nodo(lista, posicion - 1);
 		nodo_anterior->siguiente_nodo = nuevo_nodo;
 	}
