@@ -68,12 +68,11 @@ lista_t *lista_insertar(lista_t *lista, void *elemento)
 	if (lista_vacia(lista)) {
 		lista->inicio = nuevo_nodo;
 		lista->fin = nuevo_nodo;
-		lista->cantidad_nodos++;
-		return lista;
+	} else {
+		lista->fin->siguiente_nodo = nuevo_nodo;
+		lista->fin = nuevo_nodo;
 	}
 
-	lista->fin->siguiente_nodo = nuevo_nodo;
-	lista->fin = nuevo_nodo;
 	lista->cantidad_nodos++;
 	return lista;
 }
@@ -92,14 +91,13 @@ lista_t *lista_insertar_posicion(lista_t *lista, size_t posicion,
 	nuevo_nodo->contenido = elemento;
 	nuevo_nodo->siguiente_nodo = lista_buscar_nodo(lista, posicion);
 
-	if (posicion == 0) {
+	if (posicion == 0)
 		lista->inicio = nuevo_nodo;
-		lista->cantidad_nodos++;
-		return lista;
+	else {
+		nodo_t *nodo_anterior = lista_buscar_nodo(lista, posicion - 1);
+		nodo_anterior->siguiente_nodo = nuevo_nodo;
 	}
 
-	nodo_t *nodo_anterior = lista_buscar_nodo(lista, posicion - 1);
-	nodo_anterior->siguiente_nodo = nuevo_nodo;
 	lista->cantidad_nodos++;
 	return lista;
 }
@@ -137,8 +135,8 @@ void *lista_eliminar(lista_t *lista)
 	void *puntero_contenido = nodo_a_eliminar->contenido;
 
 	lista->fin = nodo_anterior;
-	free(nodo_a_eliminar);
 	lista->fin->siguiente_nodo = NULL;
+	free(nodo_a_eliminar);
 	lista->cantidad_nodos--;
 
 	return puntero_contenido;

@@ -55,17 +55,15 @@ int parsear_argumentos(int argc, char **argv, bool *argumento_es_operando)
 	int cantidad_operandos = 0;
 	int cantidad_operadores = 0;
 
-	if (argc == 1)
-		flag_argumento_invalido = true;
 	while (i < argc && !flag_argumento_invalido) {
 		if (argumento_representa_operando(argv[i])) {
 			argumento_es_operando[i - 1] = true;
 			cantidad_operandos++;
-		} else if (identificar_indice_operador(argv[i][0]) != -1) {
+		} else if (identificar_indice_operador(argv[i][0]) != -1)
 			cantidad_operadores++;
-		} else {
+		else
 			flag_argumento_invalido = true;
-		}
+
 		i++;
 	}
 	if (cantidad_operandos != cantidad_operadores + 1)
@@ -94,9 +92,9 @@ double calcular_resultado(int argc, char **argv, pila_t *pila,
 			double *numero_1 = pila_desapilar(pila);
 			double *numero_2 = pila_desapilar(pila);
 
-			if (numero_1 == NULL || numero_2 == NULL) {
+			if (numero_1 == NULL || numero_2 == NULL)
 				*flag_error_calculo = true;
-			} else {
+			else {
 				int indice_operador =
 					identificar_indice_operador(argv[i][0]);
 				double *resultado_operacion =
@@ -124,30 +122,30 @@ double calcular_resultado(int argc, char **argv, pila_t *pila,
 
 int main(int argc, char **argv)
 {
-	bool *argumento_es_operando = calloc(1, ((long unsigned int)argc - 1) * sizeof(bool));
+	bool *argumento_es_operando =
+		calloc(1, ((long unsigned int)argc - 1) * sizeof(bool));
 
 	if (parsear_argumentos(argc, argv, argumento_es_operando) ==
 	    ERROR_ENTRADA_INVALIDA) {
 		free(argumento_es_operando);
 		printf(AVISO_ERROR_ENTRADA);
-		return ERROR_ENTRADA_INVALIDA;
+		return 0;
 	}
 
 	pila_t *pila = pila_crear();
-
 	bool flag_error_calculo = false;
 	double resultado = calcular_resultado(
 		argc, argv, pila, argumento_es_operando, &flag_error_calculo);
 	if (flag_error_calculo) {
 		free(argumento_es_operando);
-		pila_destruir(pila);
+		pila_destruir_todo(pila, free);
 		printf(AVISO_ERROR_ENTRADA);
 		printf(AVISO_ERROR_CALCULO);
-		return ERROR_CALCULO_INVALIDO;
+		return 0;
 	}
 
 	free(argumento_es_operando);
 	pila_destruir_todo(pila, free);
 	printf(AVISO_RESULTADO, resultado);
-	return SIN_ERRORES;
+	return 0;
 }

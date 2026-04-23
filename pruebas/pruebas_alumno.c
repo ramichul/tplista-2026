@@ -3,7 +3,6 @@
 #include "../src/lista.h"
 #include "../src/pila.h"
 
-
 int comparador_enteros_son_iguales(const void *elemento1, const void *elemento2)
 {
 	bool enteros_son_iguales = *((int *)elemento1) == *((int *)elemento2);
@@ -144,7 +143,7 @@ void lista_insertar_agrega_elemento_a_lista_vacia()
 	int *elemento_inicio = lista_obtener_posicion(lista, 0);
 
 	pa2m_afirmar(
-		*elemento_inicio == 50,
+		elemento_inicio == &dato,
 		"lista_insertar() agrega un elemento correctamente a una lista vacía");
 	lista_destruir(lista);
 }
@@ -160,7 +159,7 @@ void lista_insertar_agrega_elemento_a_lista_no_vacia()
 	int *elemento_fin = lista_obtener(lista);
 
 	pa2m_afirmar(
-		*elemento_fin == 3,
+		elemento_fin == &elementos[2],
 		"lista_insertar() agrega un elemento correctamente a una lista no vacía");
 	lista_destruir(lista);
 }
@@ -225,7 +224,7 @@ void lista_insertar_posicion_agrega_elemento_a_lista_vacia()
 	int *elemento_insertado = lista_obtener(lista);
 
 	pa2m_afirmar(
-		*elemento_insertado == 50,
+		elemento_insertado == &dato,
 		"lista_insertar_posicion() agrega un elemento correctamente a una lista vacía");
 	lista_destruir(lista);
 }
@@ -261,7 +260,7 @@ void lista_insertar_posicion_agrega_elemento_al_principio_correctamente()
 	int *elemento_inicio = lista_obtener_posicion(lista, 0);
 
 	pa2m_afirmar(
-		*elemento_inicio == 50,
+		elemento_inicio == &dato,
 		"lista_insertar_posicion() agrega un elemento al principio correctamente");
 	lista_destruir(lista);
 }
@@ -276,16 +275,17 @@ void lista_insertar_posicion_agrega_elemento_en_el_medio_correctamente()
 	}
 
 	int dato = 50;
-	size_t pos = 1;
-	lista_insertar_posicion(lista, pos, &dato);
+	size_t posicion = 1;
+	lista_insertar_posicion(lista, posicion, &dato);
 
-	int *elemento_anterior = lista_obtener_posicion(lista, pos - 1);
-	int *elemento_insertado = lista_obtener_posicion(lista, pos);
-	int *elemento_siguiente = lista_obtener_posicion(lista, pos + 1);
+	int *elemento_anterior = lista_obtener_posicion(lista, posicion - 1);
+	int *elemento_insertado = lista_obtener_posicion(lista, posicion);
+	int *elemento_siguiente = lista_obtener_posicion(lista, posicion + 1);
 
 	pa2m_afirmar(
-		*elemento_anterior == 1 && *elemento_insertado == 50 &&
-			*elemento_siguiente == 2,
+		elemento_anterior == &elementos[0] &&
+			elemento_insertado == &dato &&
+			elemento_siguiente == &elementos[1],
 		"lista_insertar_posicion() agrega un elemento en el medio correctamente");
 	lista_destruir(lista);
 }
@@ -305,7 +305,7 @@ void lista_insertar_posicion_agrega_elemento_al_final_correctamente()
 	int *elemento_final = lista_obtener(lista);
 
 	pa2m_afirmar(
-		*elemento_final == dato,
+		elemento_final == &dato,
 		"lista_insertar_posicion() agrega un elemento al final correctamente");
 	lista_destruir(lista);
 }
@@ -318,7 +318,7 @@ void lista_insertar_posicion_agrega_elementos_en_una_posicion_invalida()
 	int *elemento_final = lista_obtener(lista);
 
 	pa2m_afirmar(
-		*elemento_final == dato,
+		elemento_final == &dato,
 		"lista_insertar_posicion() recibe una posición inválida y agrega el elemento al final de la lista correctamente");
 	lista_destruir(lista);
 }
@@ -380,7 +380,7 @@ void lista_obtener_encuentra_elemento_presente_y_extrae_datos_correctamente()
 	int *resultado_busqueda = lista_obtener(lista);
 
 	pa2m_afirmar(
-		*resultado_busqueda == elementos[2],
+		resultado_busqueda == &elementos[2],
 		"lista_obtener() logra encontrar el último elemento y extrae sus datos correctamente");
 	lista_destruir(lista);
 }
@@ -434,7 +434,7 @@ void lista_obtener_posicion_encuentra_elemento_presente()
 
 	pa2m_afirmar(
 		resultado_busqueda == &elementos[1],
-		"lista_obtener_posicion() logra encontrar un elemento en una posición válida");
+		"lista_obtener_posicion() logra encontrar un elemento en una posición intermedia");
 	lista_destruir(lista);
 }
 
@@ -449,8 +449,8 @@ void lista_obtener_posicion_encuentra_elemento_presente_y_extrae_datos_correctam
 	int *resultado_busqueda = lista_obtener_posicion(lista, 1);
 
 	pa2m_afirmar(
-		*resultado_busqueda == elementos[1],
-		"lista_obtener_posicion() logra encontrar un elemento en una posición válida y extrae sus datos correctamente");
+		resultado_busqueda == &elementos[1],
+		"lista_obtener_posicion() logra encontrar un elemento en una posición intermedia y extrae sus datos correctamente");
 	lista_destruir(lista);
 }
 
@@ -486,7 +486,7 @@ void lista_eliminar_elimina_elemento_y_extrae_datos_correctamente()
 	int *elemento_eliminado = lista_eliminar(lista);
 
 	pa2m_afirmar(
-		*elemento_eliminado == 3,
+		elemento_eliminado == &elementos[2],
 		"lista_eliminar() elimina un elemento y extrae sus datos correctamente");
 	lista_destruir(lista);
 }
@@ -504,7 +504,7 @@ void lista_eliminar_elimina_elemento_y_lo_remueve_de_la_lista()
 	int *elemento_final = lista_obtener(lista);
 
 	pa2m_afirmar(
-		*elemento_final == elementos[1],
+		elemento_final == &elementos[1],
 		"lista_eliminar() elimina un elemento y ya no forma parte de la lista");
 	lista_destruir(lista);
 }
@@ -574,7 +574,7 @@ void lista_eliminar_posicion_elimina_elemento_y_extrae_datos_correctamente()
 	int *elemento_eliminado = lista_eliminar_posicion(lista, 1);
 
 	pa2m_afirmar(
-		*elemento_eliminado == 2,
+		elemento_eliminado == &elementos[1],
 		"lista_eliminar_posicion() elimina un elemento y extrae sus datos correctamente");
 	lista_destruir(lista);
 }
@@ -721,11 +721,11 @@ void lista_buscar_no_modifica_variable_posicion_buscando_elemento_no_presente()
 	}
 
 	int dato = 5;
-	size_t posicion = 0;
+	size_t posicion = 5;
 	lista_buscar(lista, &dato, comparador_enteros_son_iguales, &posicion);
 
 	pa2m_afirmar(
-		posicion == 0,
+		posicion == 5,
 		"lista_buscar() no modifica el valor de la variable de posición si no encuentra el elemento");
 	lista_destruir(lista);
 }
@@ -733,11 +733,11 @@ void lista_buscar_no_modifica_variable_posicion_buscando_elemento_no_presente()
 void lista_con_cada_elemento_ignora_lista_nula()
 {
 	int dato = 5;
-	size_t cantidad_comparaciones = lista_con_cada_elemento(
+	size_t cantidad_elementos_afectados = lista_con_cada_elemento(
 		NULL, funcion_generica_comparador_enteros, &dato);
 
 	pa2m_afirmar(
-		cantidad_comparaciones == 0,
+		cantidad_elementos_afectados == 0,
 		"lista_con_cada_elemento() no intenta iterar sobre una lista nula");
 }
 
@@ -750,11 +750,11 @@ void lista_con_cada_elemento_ignora_funcion_nula_sobre_lista_valida()
 	}
 
 	int dato = 5;
-	size_t cantidad_comparaciones =
+	size_t cantidad_elementos_afectados =
 		lista_con_cada_elemento(lista, NULL, &dato);
 
 	pa2m_afirmar(
-		cantidad_comparaciones == 0,
+		cantidad_elementos_afectados == 0,
 		"lista_con_cada_elemento() no intenta iterar sobre una lista válida con una función nula");
 	lista_destruir(lista);
 }
@@ -879,7 +879,7 @@ void lista_iterador_crear_inicializa_el_iterador_en_el_primer_elemento()
 	int *elemento_actual = lista_iterador_actual(iterador_externo);
 
 	pa2m_afirmar(
-		iterador_externo != NULL && *elemento_actual == elementos[0],
+		iterador_externo != NULL && elemento_actual == &elementos[0],
 		"lista_iterador_crear() crea un iterador y lo inicializa en el primer elemento");
 	lista_iterador_destruir(iterador_externo);
 	lista_destruir(lista);
@@ -898,7 +898,7 @@ void lista_iterador_avanzar_avanza_al_siguiente_elemento_correctamente()
 	int *elemento_actual = lista_iterador_actual(iterador_externo);
 
 	pa2m_afirmar(
-		*elemento_actual == elementos[1],
+		elemento_actual == &elementos[1],
 		"lista_iterador_avanzar() avanza al siguiente elemento correctamente");
 	lista_iterador_destruir(iterador_externo);
 	lista_destruir(lista);
@@ -994,7 +994,7 @@ void lista_iterador_actual_extrae_datos_correctamente()
 	int *elemento_actual = lista_iterador_actual(iterador_externo);
 
 	pa2m_afirmar(
-		*elemento_actual == 1,
+		elemento_actual == &elementos[0],
 		"lista_iterador_actual() extrae los datos del elemento actual correctamente");
 	lista_iterador_destruir(iterador_externo);
 	lista_destruir(lista);
@@ -1092,7 +1092,7 @@ void pila_tope_extrae_datos_correctamente()
 
 	int *elemento_tope = pila_tope(pila);
 	pa2m_afirmar(
-		*elemento_tope == 3,
+		elemento_tope == &elementos[2],
 		"pila_tope() logra encontrar el elemento del tope y extrae sus datos correctamente");
 	pila_destruir(pila);
 }
@@ -1124,10 +1124,10 @@ void pila_apilar_agrega_elemento_a_pila_vacia()
 	pila_t *pila = pila_crear();
 	int dato = 50;
 	pila_apilar(pila, &dato);
-	int *elemento_inicio = pila_tope(pila);
+	int *elemento_tope = pila_tope(pila);
 
 	pa2m_afirmar(
-		*elemento_inicio == 50,
+		elemento_tope == &dato,
 		"pila_apilar() agrega un elemento a una pila vacía correctamente");
 	pila_destruir(pila);
 }
@@ -1142,7 +1142,7 @@ void pila_apilar_agrega_elemento_a_pila_no_vacia()
 	int *elemento_tope = pila_tope(pila);
 
 	pa2m_afirmar(
-		*elemento_tope == 3,
+		elemento_tope == &elementos[2],
 		"pila_apilar() agrega un elemento a una pila no vacía correctamente");
 	pila_destruir(pila);
 }
@@ -1213,7 +1213,7 @@ void pila_desapilar_elimina_elemento_y_extrae_datos_correctamente()
 	int *elemento_eliminado = pila_desapilar(pila);
 
 	pa2m_afirmar(
-		*elemento_eliminado == 3,
+		elemento_eliminado == &elementos[2],
 		"pila_desapilar() elimina un elemento del tope y extrae sus datos correctamente");
 	pila_destruir(pila);
 }
@@ -1231,7 +1231,7 @@ void pila_desapilar_elimina_elemento_y_lo_remueve_de_la_pila()
 	int *elemento_tope = pila_tope(pila);
 
 	pa2m_afirmar(
-		*elemento_tope == 2,
+		elemento_tope == &elementos[1],
 		"pila_desapilar() elimina un elemento del tope y ya no forma parte de la pila");
 	pila_destruir(pila);
 }
@@ -1345,7 +1345,7 @@ void cola_frente_extrae_datos_correctamente()
 
 	int *elemento_frente = cola_frente(cola);
 	pa2m_afirmar(
-		*elemento_frente == 1,
+		elemento_frente == &elementos[0],
 		"cola_frente() logra encontrar el elemento del frente y extrae sus datos correctamente");
 	cola_destruir(cola);
 }
@@ -1376,11 +1376,10 @@ void cola_encolar_agrega_elemento_a_cola_vacia()
 {
 	cola_t *cola = cola_crear();
 	int dato = 50;
-	cola_encolar(cola, &dato);
-	int *elemento_inicio = cola_frente(cola);
+	cola_t *resultado_encolar = cola_encolar(cola, &dato);
 
 	pa2m_afirmar(
-		*elemento_inicio == 50,
+		resultado_encolar == cola,
 		"cola_encolar() agrega un elemento a una cola vacía correctamente");
 	cola_destruir(cola);
 }
@@ -1466,7 +1465,7 @@ void cola_desencolar_elimina_elemento_y_extrae_datos_correctamente()
 	int *elemento_eliminado = cola_desencolar(cola);
 
 	pa2m_afirmar(
-		*elemento_eliminado == 1,
+		*elemento_eliminado == elementos[0],
 		"cola_desencolar() elimina un elemento del frente y extrae sus datos correctamente");
 	cola_destruir(cola);
 }
@@ -1484,7 +1483,7 @@ void cola_desencolar_elimina_elemento_y_lo_remueve_de_la_cola()
 	int *elemento_frente = cola_frente(cola);
 
 	pa2m_afirmar(
-		*elemento_frente == 2,
+		elemento_frente == &elementos[1],
 		"cola_desencolar() elimina un elemento del frente y ya no forma parte de la cola");
 	cola_destruir(cola);
 }

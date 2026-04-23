@@ -12,26 +12,26 @@
 ## 1. Instrucciones
 ### 1.1. Compilar el proyecto
 ```bash
-gcc -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror -O2 -g main.c src/*.c -o calculadora_nip
+gcc -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror -O2 -g main.c src/*.c -o calculadora_npi
 gcc -std=c99 -Wall -Wconversion -Wtype-limits -pedantic -Werror -O2 -g src/*.c pruebas/pruebas_alumno.c -o pruebas_alumno
 ```
 
 ### 1.2. Ejecutar las pruebas
 ```bash
-./calculadora_nip [expresión]
+./calculadora_npi [expresión]
 ./pruebas_alumno
 ```
 
 ### 1.3. Ejecutar el programa con Valgrind
 ```bash
-valgrind --leak-check=full ./calculadora_nip [expresión]
+valgrind --leak-check=full ./calculadora_npi [expresión]
 valgrind --leak-check=full ./pruebas_alumno
 ```
 &nbsp;
 ## 2. Funcionamiento
 ### Estructuras
 ##### Lista
-Es la estructura principal del proyecto. Está compuesta a la vez por otra estructura más pequeña, los nodos, formados por un puntero que representa su "contenido", el cual se puede acceder libremente por el usuario, y una referencia al siguiente nodo de la lista. Este último campo le da a la lista la característica de ser simplemente enlazada. La lista en sí contiene un puntero tanto al primer nodo como al final, junto con un conteo de elementos o "tope".
+Es la estructura principal del proyecto. Está compuesta a la vez por otra estructura más pequeña, los nodos, formados por un puntero que representa su "contenido", el cual se puede acceder libremente por el usuario, y una referencia al siguiente nodo de la lista. Al limitar la navegación a que sea unidireccional, la lista implementada se considera simplemente enlazada. La lista en sí contiene un puntero tanto al primer nodo como al final, junto con un conteo de elementos o "tope".
 
 Se adjunta una visualización de la estructura:
 
@@ -50,17 +50,11 @@ Se utiliza para iterar sobre la lista. Internamente contiene un puntero a un nod
 ### Primitivas
 ##### Lista
 
-**`lista_t *lista_crear()`**: Crea una lista vacía y devuelve un puntero a la misma. Devuelve `NULL` en caso de error. Internamente, se realiza una reserva de memoria y se inicializan los 3 campos de la estructura mediante asignaciones simples. 
-Su complejidad es de $O(1)$.
+**`lista_t *lista_crear()`**: Crea una lista vacía y devuelve un puntero a la misma. Devuelve `NULL` en caso de error.
 
-
-**`bool lista_vacia(lista_t *lista)`**: Devuelve `true` si la lista está vacía. Una lista nula se considera vacía. Internamente, se realizan chequeos simples relacionados al valor de `cantidad_nodos`. 
-Su complejidad es $O(1)$.
-
+**`bool lista_vacia(lista_t *lista)`**: Devuelve `true` si la lista está vacía. Una lista nula se considera vacía.
 
 **`size_t lista_cantidad(lista_t *lista)`**: Devuelve la cantidad de elementos en la lista o `0` en caso de error. 
-Simplemente se devuelve el valor actual de `cantidad_nodos`, por lo que su complejidad es $O(1)$.
-
 
 **`lista_t *lista_insertar(lista_t *lista, void *elemento)`**: Inserta un elemento al final de la lista. Devuelve la lista o `NULL` en caso de error. Su funcionamiento es el siguiente:
 1. Se reserva memoria para un nuevo nodo que contiene el `dato` a insertar. 
@@ -71,8 +65,6 @@ Simplemente se devuelve el valor actual de `cantidad_nodos`, por lo que su compl
 Una visualización simplificada de lo que hace la función se puede ver en el siguiente diagrama:
 
 ![](https://i.imgur.com/lAAVhI6.png)
-
-Su complejidad es $O(1)$ ya que no necesita iterar sobre la lista (solo reasignar datos) para cumplir su función.
 
 **`lista_t *lista_insertar_posicion(lista_t *lista, size_t posicion, void *elemento)`**: Inserta un elemento en la posición dada de la lista. Devuelve la lista o NULL en caso de error. Funciona así:
 1. Si `posicion >= lista_cantidad(lista)`, esta función es idéntica a `lista_insertar`. Se delega la tarea a esta función.
@@ -87,13 +79,9 @@ Una visualización simplificada de lo que hace la función se puede ver en el si
 ![](https://i.imgur.com/3lN744X.png)
 
 
-Al tener que iterar para buscar nodos en posiciones intermedias dentro de la lista, la función recibe una complejidad de $O(n)$.
-
-**`void *lista_obtener(lista_t \*lista)`**: Devuelve el último elemento de la lista (si existe). En caso de error devuelve NULL. Internamente, accede directamente a `lista->fin->contenido` y lo devuelve. 
-Su complejidad es $O(1)$.
+**`void *lista_obtener(lista_t \*lista)`**: Devuelve el último elemento de la lista (si existe). En caso de error devuelve NULL.
 
 **`void *lista_obtener_posicion(lista_t *lista, size_t posicion)`**: Dada una `posicion` de la lista, devuelve el elemento en esa `posicion`. En caso de error devuelve NULL. 
-Internamente, la función avanza en la lista `posicion` veces y devuelve el contenido del nodo en esa posición. Su complejidad es $O(n)$.
 
 **`void *lista_eliminar(lista_t *lista)`**: Elimina el último elemento de la lista (si existe) y lo devuelve. En caso de error devuelve NULL. Su funcionamiento es el siguiente:
 1. Identifica el nodo a eliminar (al que apunta `lista->fin`).
@@ -103,7 +91,6 @@ Internamente, la función avanza en la lista `posicion` veces y devuelve el cont
 5. Libera la memoria reservada para el último nodo.
 6. Disminuye `cantidad_nodos`.
 
-Al tener que iterar para buscar nodos en posiciones intermedias dentro de la lista, la función recibe una complejidad de $O(n)$.
 
 **`void *lista_eliminar_posicion(lista_t *lista, size_t posicion)`**: Elimina un elemento de la lista en la `posicion` dada. Devuelve el elemento eliminado si la `posicion` es válida. En caso de error devuelve `NULL`. Funciona así:
 1. Si se busca eliminar al inicio, se llama `lista_eliminar_inicio`. Esta hace algunas asignaciones especificas a ese caso, pero su funcionamiento es muy similar al resto de la función.
@@ -119,68 +106,144 @@ Una visualización simplificada de lo que hace la función se puede ver en el si
 ![](https://i.imgur.com/juFvcGy.png)
 
 
-Al tener que iterar para buscar nodos en posiciones intermedias dentro de la lista, la función recibe una complejidad de $O(n)$.
-
 **`bool lista_buscar(lista_t *lista, void *elemento, int (*comparador)(const void *, const void *), size_t *posicion)`**: Busca un `elemento` en la lista secuencialmente y devuelve `true` si lo encuentra. Si `posicion` es no nulo, almacena la `posicion` del primer `elemento` encontrado. Si no existe el elemento devuelve `false` y no se modifica `posicion`. Su funcionamiento es el siguiente:
 1. Se empieza por el primer nodo de la lista.
 2. Mientras que se pueda avanzar en la lista y no se haya encontrado lo buscado, se ejecuta `comparador` con el contenido del nodo actual y el `elemento` pasado por parametro.
 3. Se va contando la cantidad de iteraciones en donde fallo `comparador`.
 4. Una vez finalizada la busqueda y si fue encontrado el elemento, se actualiza `posicion` si es no nula.
 
-Su complejidad es $O(n)$ ya que en el peor caso sería necesario recorrer toda la lista si el `elemento` buscado no está presente en ella.
 
 **`size_t lista_con_cada_elemento(lista_t *lista, bool (*f)(void *, void *), void *extra)`**: Recorre los elementos de la lista y aplica a cada uno la función `f`. Cuando la función `f` devuelve `false` se deja de recorrer la lista. Devuelve la cantidad de elementos a los cuales se le aplicó `f`. Esta función corresponde a la implementación del **iterador interno** para la lista.
 
-Su complejidad individual es de $O(n)$ ya que se itera sobre la cantidad total de $n$ nodos pertenecientes a la lista. Sin embargo, la función `f` puede afectar este valor. Si se considera a la variable $x$ como la cota de la complejidad de `f`, una manera más precisa de representar la complejidad final del iterador es $O(n*x)$.
-
 **`void lista_destruir_todo(lista_t \*lista, void (*destructor)(void *))`**: Destruye la lista aplicando la función destructora a cada elemento.
-Su complejidad individual es de $O(n)$ ó $O(n*x)$ por razones similares a la función anterior.
 
-**`void lista_destruir(lista_t \*lista)`**: Destruye la lista. Esta función es una forma reducida de `lista_destruir_todo`. Su complejidad es de $O(n)$.
+**`void lista_destruir(lista_t \*lista)`**: Destruye la lista.
 
 Para el iterador externo:
 
-**`lista_iterador_t *lista_iterador_crear(lista_t *lista)`**: Crea un iterador externo para la lista. Realiza reservas de memoria y asignaciones de valores simples. Su complejidad es $O(1)$.
+**`lista_iterador_t *lista_iterador_crear(lista_t *lista)`**: Crea un iterador externo para la lista. 
 
-**`bool lista_iterador_hay_mas_elementos(lista_iterador_t *it)`**: Devuelve `true` si aún quedan elementos por iterar. Realiza un chequeo simple, se asegura que el nodo actual no sea nulo. Su complejidad es $O(1)$.
+**`bool lista_iterador_hay_mas_elementos(lista_iterador_t *it)`**: Devuelve `true` si aún quedan elementos por iterar.
 
-**`void lista_iterador_avanzar(lista_iterador_t *it)`**: Avanza el iterador a la siguiente iteración. Simplemente accede a `actual->siguiente_nodo`. Su complejidad es $O(1)$.
+**`void lista_iterador_avanzar(lista_iterador_t *it)`**: Avanza el iterador a la siguiente iteración.
 
-**`void *lista_iterador_actual(lista_iterador_t *it)`**: Devuelve el elemento de la iteración actual. Su complejidad es $O(1)$.
+**`void *lista_iterador_actual(lista_iterador_t *it)`**: Devuelve el elemento de la iteración actual.
 
-**`void lista_iterador_destruir(lista_iterador_t *it)`**: Destruye el iterador. Su complejidad es $O(1)$.
+**`void lista_iterador_destruir(lista_iterador_t *it)`**: Destruye el iterador.
 &nbsp;
 ##### Pila
 
-**`pila_t *pila_crear()`**: Crea una pila vacía y devuelve un puntero a la misma. Devuelve `NULL` en caso de error. Su complejidad es de $O(1)$.
+**`pila_t *pila_crear()`**: Crea una pila vacía y devuelve un puntero a la misma. Devuelve `NULL` en caso de error.
 
-**`pila_t *pila_apilar(pila_t *pila, void *elemento)`**: Apila un `elemento` en la pila. Devuelve la pila o `NULL` en caso de error. Llama a `lista_insertar_posicion` con `posicion = 0`, por lo que no se necesita iterar sobre la lista para insertar. Su complejidad es $O(1)$.
+**`pila_t *pila_apilar(pila_t *pila, void *elemento)`**: Apila un `elemento` en la pila. Devuelve la pila o `NULL` en caso de error.
 
-**`void *pila_desapilar(pila_t *pila)`**: Desapila un elemento y lo devuelve. Devuelve `NULL` en caso de error. Llama a `lista_eliminar_posicion` con `posicion = 0`, por lo que no se necesita iterar sobre la lista para eliminar. Su complejidad es $O(1)$.
+**`void *pila_desapilar(pila_t *pila)`**: Desapila un elemento y lo devuelve. Devuelve `NULL` en caso de error.
 
-**`void *pila_tope(pila_t *pila)`**: Devuelve el primer elemento de la pila y lo devuelve (o NULL en caso de error). Llama a `lista_obtener_posicion` con `posicion = 0`. Su complejidad es $O(1)$.
+**`void *pila_tope(pila_t *pila)`**: Devuelve el primer elemento de la pila y lo devuelve (o NULL en caso de error).
 
-**`size_t pila_cantidad(pila_t *pila)`**: Devuelve la cantidad de elementos en la pila. Esto es equivalente a devolver la cantidad de la lista interna de la estructura. Su complejidad es $O(1)$.
+**`size_t pila_cantidad(pila_t *pila)`**: Devuelve la cantidad de elementos en la pila.
 
-**`void pila_destruir_todo(pila_t *pila, void (*destructor)(void *))`**: Destruye la pila aplicando la función destructora a cada elemento. Es funcionalmente idéntica a `lista_destruir_todo`, por lo que comparte su cota de complejidad de $O(n*x)$.
+**`void pila_destruir_todo(pila_t *pila, void (*destructor)(void *))`**: Destruye la pila aplicando la función destructora a cada elemento.
 
-**`void pila_destruir(pila_t *pila)`**: Destruye la pila. Es funcionalmente idéntica a `lista_destruir`, por lo que comparte su cota de complejidad de $O(n)$.
+**`void pila_destruir(pila_t *pila)`**: Destruye la pila.
 &nbsp;
 ##### Cola
 
-**`cola_t *cola_crear()`**: Crea una cola vacía y devuelve un puntero a la misma. Devuelve `NULL` en caso de error. Su complejidad es de $O(1)$.
+**`cola_t *cola_crear()`**: Crea una cola vacía y devuelve un puntero a la misma. Devuelve `NULL` en caso de error.
 
-**`cola_t *cola_encolar(cola_t *cola, void *elemento)`**: Encola un `elemento`. Devuelve la cola o `NULL` en caso de error. Llama a `lista_insertar`. Su complejidad es $O(1)$.
+**`cola_t *cola_encolar(cola_t *cola, void *elemento)`**: Encola un `elemento`. Devuelve la cola o `NULL` en caso de error.
 
-**`void *cola_desencolar(cola_t *cola)`**: Desencola un elemento y lo devuelve. Devuelve `NULL` en caso de error. Llama a `lista_eliminar_posicion` con `posicion = 0`, por lo que no se necesita iterar sobre la lista para eliminar. Su complejidad es $O(1)$.
+**`void *cola_desencolar(cola_t *cola)`**: Desencola un elemento y lo devuelve. Devuelve `NULL` en caso de error.
 
-**`void *cola_frente(cola_t *cola)`**: Devuelve el primer elemento de la cola y lo devuelve (o NULL en caso de error). Llama a `lista_obtener_posicion` con `posicion = 0`. Su complejidad es $O(1)$.
+**`void *cola_frente(cola_t *cola)`**: Devuelve el primer elemento de la cola y lo devuelve (o NULL en caso de error).
 
-**`size_t cola_cantidad(cola_t *cola)`**: Devuelve la cantidad de elementos en la cola. Esto es equivalente a devolver la cantidad de la lista interna de la estructura. Su complejidad es $O(1)$.
+**`size_t cola_cantidad(cola_t *cola)`**: Devuelve la cantidad de elementos en la cola.
 
-**`void cola_destruir_todo(cola_t *cola, void (*destructor)(void *))`**: Destruye la pila aplicando la función destructora a cada elemento. Es funcionalmente idéntica a `lista_destruir_todo`, por lo que comparte su cota de complejidad de $O(n*x)$.
+**`void cola_destruir_todo(cola_t *cola, void (*destructor)(void *))`**: Destruye la pila aplicando la función destructora a cada elemento.
 
-**`void cola_destruir(cola_t *cola)`**: Destruye la pila. Es funcionalmente idéntica a `lista_destruir`, por lo que comparte su cota de complejidad de $O(n)$.
+**`void cola_destruir(cola_t *cola)`**: Destruye la pila.
+&nbsp;
+### Complejidades temporales
+**`lista_t *lista_crear()`**: Se realiza una reserva de memoria y se inicializan los 3 campos de la estructura mediante asignaciones simples. Su complejidad es de $O(1)$.
+
+**`bool lista_vacia(lista_t *lista)`**: Se realizan chequeos simples relacionados al valor de `cantidad_nodos`. Su complejidad es $O(1)$.
+
+**`size_t lista_cantidad(lista_t *lista)`**: Simplemente se devuelve el valor actual de `cantidad_nodos`, por lo que su complejidad es $O(1)$.
+
+**`lista_t *lista_insertar(lista_t *lista, void *elemento)`**: Su complejidad es $O(1)$ ya que no necesita iterar sobre la lista (solo reasignar datos) para cumplir su función.
+
+**`lista_t *lista_insertar_posicion(lista_t *lista, size_t posicion, void *elemento)`**: Al tener que iterar para buscar nodos en posiciones intermedias dentro de la lista, la función recibe una complejidad de $O(n)$.
+
+**`void *lista_obtener(lista_t \*lista)`**: Accede directamente a `lista->fin->contenido` y lo devuelve. Su complejidad es $O(1)$.
+
+**`void *lista_obtener_posicion(lista_t *lista, size_t posicion)`**: La función avanza en la lista `posicion` veces y devuelve el contenido del nodo en esa posición. Su complejidad es $O(n)$.
+
+**`void *lista_eliminar(lista_t *lista)`**: Al tener que iterar para buscar nodos en posiciones intermedias dentro de la lista, la función recibe una complejidad de $O(n)$.
+
+**`void *lista_eliminar_posicion(lista_t *lista, size_t posicion)`**: Al tener que iterar para buscar nodos en posiciones intermedias dentro de la lista, la función recibe una complejidad de $O(n)$.
+
+**`bool lista_buscar(lista_t *lista, void *elemento, int (*comparador)(const void *, const void *), size_t *posicion)`**: Su complejidad es $O(n)$ ya que en el peor caso sería necesario recorrer toda la lista si el `elemento` buscado no está presente en ella.
+
+**`size_t lista_con_cada_elemento(lista_t *lista, bool (*f)(void *, void *), void *extra)`**: Su complejidad individual es de $O(n)$ ya que se itera sobre la cantidad total de $n$ nodos pertenecientes a la lista. Sin embargo, la función `f` puede afectar este valor. Si se considera a la variable $x$ como la cota de la complejidad de `f`, una manera más precisa de representar la complejidad final del iterador es $O(n*x)$.
+
+**`void lista_destruir_todo(lista_t \*lista, void (*destructor)(void *))`**: Su complejidad individual es de $O(n)$ ó $O(n*x)$ por razones similares a la función anterior.
+
+**`void lista_destruir(lista_t \*lista)`**: Su complejidad es de $O(n)$, ya que la tarea implíca liberar la memoria que ocupan $n$ nodos.
+
+Para el iterador externo:
+
+**`lista_iterador_t *lista_iterador_crear(lista_t *lista)`**: Realiza reservas de memoria y asignaciones de valores simples. Su complejidad es $O(1)$.
+
+**`bool lista_iterador_hay_mas_elementos(lista_iterador_t *it)`**: Realiza un chequeo simple, se asegura que el nodo actual no sea nulo. Su complejidad es $O(1)$.
+
+**`void lista_iterador_avanzar(lista_iterador_t *it)`**: Simplemente accede a `actual->siguiente_nodo`. Su complejidad es $O(1)$.
+
+**`void *lista_iterador_actual(lista_iterador_t *it)`**: Accede directamente a `it->actual->contenido`. Su complejidad es $O(1)$.
+
+**`void lista_iterador_destruir(lista_iterador_t *it)`**: Su complejidad es $O(1)$, ya que el iterador es una estructura simple sin campos que requieran memoria adicional.
+&nbsp;
+##### Pila
+
+**`pila_t *pila_crear()`**: Su complejidad es de $O(1)$.
+
+**`pila_t *pila_apilar(pila_t *pila, void *elemento)`**: Llama a `lista_insertar_posicion` con `posicion = 0`, por lo que no se necesita iterar sobre la lista para insertar. Su complejidad es $O(1)$.
+
+**`void *pila_desapilar(pila_t *pila)`**: Llama a `lista_eliminar_posicion` con `posicion = 0`, por lo que no se necesita iterar sobre la lista para eliminar. Su complejidad es $O(1)$.
+
+**`void *pila_tope(pila_t *pila)`**: Llama a `lista_obtener_posicion` con `posicion = 0`. Su complejidad es $O(1)$.
+
+**`size_t pila_cantidad(pila_t *pila)`**: Su complejidad es $O(1)$.
+
+**`void pila_destruir_todo(pila_t *pila, void (*destructor)(void *))`**: Es funcionalmente idéntica a `lista_destruir_todo`, por lo que comparte su cota de complejidad de $O(n*x)$.
+
+**`void pila_destruir(pila_t *pila)`**: Es funcionalmente idéntica a `lista_destruir`, por lo que comparte su cota de complejidad de $O(n)$.
+&nbsp;
+##### Cola
+
+**`cola_t *cola_crear()`**: Su complejidad es de $O(1)$.
+
+**`cola_t *cola_encolar(cola_t *cola, void *elemento)`**: Llama a `lista_insertar`. Su complejidad es $O(1)$.
+
+**`void *cola_desencolar(cola_t *cola)`**: Llama a `lista_eliminar_posicion` con `posicion = 0`, por lo que no se necesita iterar sobre la lista para eliminar. Su complejidad es $O(1)$.
+
+**`void *cola_frente(cola_t *cola)`**: Llama a `lista_obtener_posicion` con `posicion = 0`. Su complejidad es $O(1)$.
+
+**`size_t cola_cantidad(cola_t *cola)`**: Su complejidad es $O(1)$.
+
+**`void cola_destruir_todo(cola_t *cola, void (*destructor)(void *))`**: Es funcionalmente idéntica a `lista_destruir_todo`, por lo que comparte su cota de complejidad de $O(n*x)$.
+
+**`void cola_destruir(cola_t *cola)`**: Es funcionalmente idéntica a `lista_destruir`, por lo que comparte su cota de complejidad de $O(n)$.
+&nbsp;
+### Flujo del programa de prueba implementado
+Se implementó una calculadora en Notación Polaca Inversa para comprobar el buen funcionamiento y las capacidades de la estructura. Para esto se utilizó una **pila**. Su funcionamiento es el siguiente:
+1. Antes de calcular, se parsean los argumentos. En este proceso se diferencian y se cuentan los operadores y operandos. Si algún operando es inválido, algún argumento no representa un objeto válido o no se cumple la relación `cantidad_operandos != cantidad_operadores + 1`, la entrada se considera inválida. Cabe notar que este proceso solo detecta errores en la estructura de la entrada, y no su orden. Estos últimos son detectados únicamente durante el cálculo.
+2. Una vez validados los argumentos, se crea la pila y se empieza a calcular. Esta fase es mucho más fácil de explicar gráficamente. A partir del gráfico se entiende que una entrada inválida es aquella que pida efectuar una operación sin tener dos números para calcularla, o deja numeros sueltos al finalizar su procesamiento.
+
+![](https://i.imgur.com/IrdP5ya.png)
+
+3. Si ocurrió algún error (sea durante el cálculo o el parseo de argumentos), se le avisa de esto al usuario y el programa se aborta.
+4. Caso contrario, se imprime el resultado obtenido por pantalla y se finaliza la ejecución del programa sin errores.
+
 &nbsp;
 ## 3. Respuestas a las preguntas teóricas
  - **Explicar qué es una lista, lista enlazada y lista doblemente enlazada.**
